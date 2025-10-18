@@ -1,0 +1,51 @@
+product_id,product_name,rating,price,sales,review,review_length
+PROD001,Product 1,2.6,361.54,139,Decent product for the price. Had some minor issues.,9
+PROD002,Product 2,3.4,417.9,190,Works fine. Installation was a bit tricky.,7
+PROD003,Product 3,2.6,326.42,134,Good but could be better. Missing some features.,8
+PROD004,Product 4,2.4,243.66,110,Not worth it.,3
+PROD005,Product 5,5.0,507.22,239,"Best purchase I've made this year. The build quality is exceptional, features are exactly what I needed, and customer service was fantastic. Worth every penny. Will definitely buy from this brand again.",32
+PROD006,Product 6,4.9,469.67,202,"Best purchase I've made this year. The build quality is exceptional, features are exactly what I needed, and customer service was fantastic. Worth every penny. Will definitely buy from this brand again.",32
+PROD007,Product 7,4.3,628.7,214,"Exceeded expectations in every way. I did extensive research before buying and this was the best choice. The quality, functionality, and value are all exceptional. Already recommended to three friends.",30
+PROD008,Product 8,2.4,174.9,127,Poor quality.,2
+PROD009,Product 9,1.9,351.94,110,Decent product for the price. Had some minor issues.,9
+PROD010,Product 10,4.4,436.64,219,"Best purchase I've made this year. The build quality is exceptional, features are exactly what I needed, and customer service was fantastic. Worth every penny. Will definitely buy from this brand again.",32
+PROD011,Product 11,4.4,449.09,211,"Five stars all the way! This has made my life so much easier. The design is intuitive, setup was straightforward, and performance is top-notch. Can't imagine going back to my old setup now.",33
+PROD012,Product 12,3.6,277.18,183,It's okay but nothing special. Works as expected.,8
+PROD013,Product 13,4.9,660.09,258,"Exceeded expectations in every way. I did extensive research before buying and this was the best choice. The quality, functionality, and value are all exceptional. Already recommended to three friends.",30
+PROD014,Product 14,4.9,439.09,213,"Exceeded expectations in every way. I did extensive research before buying and this was the best choice. The quality, functionality, and value are all exceptional. Already recommended to three friends.",30
+PROD015,Product 15,3.5,507.1,176,Not worth it.,3
+PROD016,Product 16,5.0,582.41,242,"Incredible product! I was skeptical at first but after using it daily for several weeks, I'm completely sold. The attention to detail is remarkable and it just works flawlessly. My colleagues are asking where I got it.",37
+PROD017,Product 17,2.4,262.47,88,Terrible product. Don't buy.,4
+PROD018,Product 18,4.6,568.21,246,"Exceeded expectations in every way. I did extensive research before buying and this was the best choice. The quality, functionality, and value are all exceptional. Already recommended to three friends.",30
+PROD019,Product 19,2.6,440.37,134,Broke after one week.,4
+PROD020,Product 20,5.0,583.13,269,"Best purchase I've made this year. The build quality is exceptional, features are exactly what I needed, and customer service was fantastic. Worth every penny. Will definitely buy from this brand again.",32
+PROD021,Product 21,2.2,193.03,134,Not worth it.,3
+PROD022,Product 22,5.0,633.48,255,"Best purchase I've made this year. The build quality is exceptional, features are exactly what I needed, and customer service was fantastic. Worth every penny. Will definitely buy from this brand again.",32
+PROD023,Product 23,2.6,301.89,139,Terrible product. Don't buy.,4
+PROD024,Product 24,3.3,376.42,196,Decent product for the price. Had some minor issues.,9
+PROD025,Product 25,2.5,333.29,97,Average quality. Not bad but not great either.,8
+PROD026,Product 26,2.8,593.35,119,Decent product for the price. Had some minor issues.,9
+PROD027,Product 27,2.1,295.71,134,Very disappointed.,2
+PROD028,Product 28,1.9,253.58,107,Very disappointed.,2
+PROD029,Product 29,2.7,435.82,140,Broke after one week.,4
+PROD030,Product 30,5.0,646.26,245,"Best purchase I've made this year. The build quality is exceptional, features are exactly what I needed, and customer service was fantastic. Worth every penny. Will definitely buy from this brand again.",32
+PROD031,Product 31,2.5,213.84,119,Works fine. Installation was a bit tricky.,7
+PROD032,Product 32,5.0,677.37,244,Absolutely love this product! The quality is outstanding and it exceeded all my expectations. Been using it for months now with zero issues. Highly recommend to anyone looking for reliability and performance.,32
+PROD033,Product 33,2.4,239.34,93,Average quality. Not bad but not great either.,8
+PROD034,Product 34,3.9,405.73,178,Terrible product. Don't buy.,4
+PROD035,Product 35,4.8,473.02,198,"Exceeded expectations in every way. I did extensive research before buying and this was the best choice. The quality, functionality, and value are all exceptional. Already recommended to three friends.",30
+PROD036,Product 36,5.0,548.14,216,"Five stars all the way! This has made my life so much easier. The design is intuitive, setup was straightforward, and performance is top-notch. Can't imagine going back to my old setup now.",33
+PROD037,Product 37,2.2,261.58,134,Terrible product. Don't buy.,4
+PROD038,Product 38,4.3,476.53,191,"Five stars all the way! This has made my life so much easier. The design is intuitive, setup was straightforward, and performance is top-notch. Can't imagine going back to my old setup now.",33
+PROD039,Product 39,3.2,255.02,144,It's okay but nothing special. Works as expected.,8
+PROD040,Product 40,5.0,536.27,278,"Exceeded expectations in every way. I did extensive research before buying and this was the best choice. The quality, functionality, and value are all exceptional. Already recommended to three friends.",30
+PROD041,Product 41,2.6,529.05,110,Not worth it.,3
+PROD042,Product 42,4.7,478.35,252,"Incredible product! I was skeptical at first but after using it daily for several weeks, I'm completely sold. The attention to detail is remarkable and it just works flawlessly. My colleagues are asking where I got it.",37
+PROD043,Product 43,2.2,233.45,122,Very disappointed.,2
+PROD044,Product 44,1.6,195.65,92,Very disappointed.,2
+PROD045,Product 45,2.5,267.79,141,Decent product for the price. Had some minor issues.,9
+PROD046,Product 46,2.1,261.3,112,Works fine. Installation was a bit tricky.,7
+PROD047,Product 47,2.2,249.41,81,Terrible product. Don't buy.,4
+PROD048,Product 48,3.0,431.62,159,Broke after one week.,4
+PROD049,Product 49,2.3,314.64,100,Very disappointed.,2
+PROD050,Product 50,2.9,405.3,167,Good but could be better. Missing some features.,8
