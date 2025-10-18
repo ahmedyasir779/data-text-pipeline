@@ -3,8 +3,8 @@
 Combine structured data processing with NLP text analysis in one seamless workflow.
 
 **Integration of:**
-- Week 1: `data-processor` - Structured data handling
-- Week 2: `text-processor` - NLP text analysis
+- `data-processor` - Structured data handling
+- `text-processor` - NLP text analysis
 
 ## ✨ Features
 
