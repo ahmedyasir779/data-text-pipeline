@@ -1,0 +1,51 @@
+product_id,product_name,rating,price,sales,review,review_length
+PROD001,Product 1,2.5,351.54,134,Average product. Works as described but nothing impressive.,8
+PROD002,Product 2,3.3,407.9,185,Meets basic expectations. Could be better.,6
+PROD003,Product 3,2.6,326.42,134,"Decent for the price. Not great, not terrible.",8
+PROD004,Product 4,3.0,303.66,140,Broke after two days. Very disappointed with the quality.,9
+PROD005,Product 5,3.1,317.22,144,Best purchase I've made this year. Works perfectly and looks amazing.,11
+PROD006,Product 6,3.0,279.67,107,Best purchase I've made this year. Works perfectly and looks amazing.,11
+PROD007,Product 7,2.4,438.7,119,Absolutely perfect. Been using it daily and it's still like new.,11
+PROD008,Product 8,2.9,224.9,152,"Cheap materials, poor design. Regret buying this.",7
+PROD009,Product 9,1.8,341.94,105,Average product. Works as described but nothing impressive.,8
+PROD010,Product 10,2.5,246.64,124,Best purchase I've made this year. Works perfectly and looks amazing.,11
+PROD011,Product 11,2.4,249.09,111,"Incredible! Fast shipping, great packaging, and the product is fantastic.",10
+PROD012,Product 12,3.6,277.18,183,It's okay. Nothing special but does the job.,8
+PROD013,Product 13,3.0,470.09,163,Absolutely perfect. Been using it daily and it's still like new.,11
+PROD014,Product 14,3.0,249.09,118,Absolutely perfect. Been using it daily and it's still like new.,11
+PROD015,Product 15,4.1,567.1,205,Broke after two days. Very disappointed with the quality.,9
+PROD016,Product 16,3.0,382.41,142,Outstanding product! Exceeded all my expectations. Five stars!,8
+PROD017,Product 17,2.9,312.47,113,Terrible product. Complete waste of money. Don't buy this!,9
+PROD018,Product 18,2.7,378.21,152,Absolutely perfect. Been using it daily and it's still like new.,11
+PROD019,Product 19,3.0,480.37,154,Not worth it at all. Save your money.,8
+PROD020,Product 20,3.4,423.13,189,Best purchase I've made this year. Works perfectly and looks amazing.,11
+PROD021,Product 21,2.8,253.03,164,Broke after two days. Very disappointed with the quality.,9
+PROD022,Product 22,3.7,503.48,190,Best purchase I've made this year. Works perfectly and looks amazing.,11
+PROD023,Product 23,3.1,351.89,164,Terrible product. Complete waste of money. Don't buy this!,9
+PROD024,Product 24,3.2,366.42,191,Average product. Works as described but nothing impressive.,8
+PROD025,Product 25,2.5,333.29,97,It works. That's about all I can say.,8
+PROD026,Product 26,2.7,583.35,114,Average product. Works as described but nothing impressive.,8
+PROD027,Product 27,2.7,355.71,164,Worst purchase ever. Customer service was unhelpful too.,8
+PROD028,Product 28,2.5,313.58,137,Worst purchase ever. Customer service was unhelpful too.,8
+PROD029,Product 29,3.1,475.82,160,Not worth it at all. Save your money.,8
+PROD030,Product 30,3.3,476.26,160,Best purchase I've made this year. Works perfectly and looks amazing.,11
+PROD031,Product 31,2.4,203.84,114,Meets basic expectations. Could be better.,6
+PROD032,Product 32,3.3,507.37,159,Love it! Excellent quality and great value for money. Highly recommend!,11
+PROD033,Product 33,2.4,239.34,93,It works. That's about all I can say.,8
+PROD034,Product 34,4.4,455.73,203,Terrible product. Complete waste of money. Don't buy this!,9
+PROD035,Product 35,2.9,283.02,103,Absolutely perfect. Been using it daily and it's still like new.,11
+PROD036,Product 36,3.6,408.14,146,"Incredible! Fast shipping, great packaging, and the product is fantastic.",10
+PROD037,Product 37,2.7,311.58,159,Terrible product. Complete waste of money. Don't buy this!,9
+PROD038,Product 38,2.3,276.53,90,"Incredible! Fast shipping, great packaging, and the product is fantastic.",10
+PROD039,Product 39,3.2,255.02,144,It's okay. Nothing special but does the job.,8
+PROD040,Product 40,3.5,386.27,203,Absolutely perfect. Been using it daily and it's still like new.,11
+PROD041,Product 41,3.2,589.05,140,Broke after two days. Very disappointed with the quality.,9
+PROD042,Product 42,2.5,258.35,142,Outstanding product! Exceeded all my expectations. Five stars!,8
+PROD043,Product 43,2.8,293.45,152,Worst purchase ever. Customer service was unhelpful too.,8
+PROD044,Product 44,2.2,255.65,122,Worst purchase ever. Customer service was unhelpful too.,8
+PROD045,Product 45,2.4,257.79,136,Average product. Works as described but nothing impressive.,8
+PROD046,Product 46,2.0,251.3,107,Meets basic expectations. Could be better.,6
+PROD047,Product 47,2.7,299.41,106,Terrible product. Complete waste of money. Don't buy this!,9
+PROD048,Product 48,3.4,471.62,179,Not worth it at all. Save your money.,8
+PROD049,Product 49,2.9,374.64,131,Worst purchase ever. Customer service was unhelpful too.,8
+PROD050,Product 50,2.9,405.3,167,"Decent for the price. Not great, not terrible.",8

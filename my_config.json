@@ -1,0 +1,11 @@
+{
+  "pipeline": {
+    "use_cache": true,
+    "analyze_sentiment": true,
+    "extract_entities": true,
+    "extract_keywords": true
+  },
+  "output": {
+    "directory": "custom_output"
+  }
+}
