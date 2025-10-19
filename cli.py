@@ -74,6 +74,29 @@ def run_pipeline(args):
             else:
                 print_warning("No text data to analyze")
         
+         # Sentiment analysis
+        if args.sentiment or args.all:
+            if pipeline.text_data:
+                print_header("SENTIMENT ANALYSIS")
+                pipeline.analyze_sentiment()
+                
+                # Correlate with data if specified
+                if args.correlate:
+                    pipeline.correlate_sentiment_with_column(args.correlate)
+            else:
+                print_warning("No text data for sentiment analysis")
+        
+        # Create visualizations
+        if args.visualize or args.all:
+            print_header("CREATING VISUALIZATIONS")
+            pipeline.create_visualizations(args.output.replace('.txt', '').replace('unified_report', 'output'))
+        
+        # Export results
+        if args.export:
+            print_header(f"EXPORTING TO {args.export.upper()}")
+            pipeline.export_results(format=args.export, 
+                                   output_dir=args.output.replace('.txt', '').replace('unified_report', 'output'))
+            
         # Step 5: Correlation analysis
         if args.correlate:
             if pipeline.text_data:
@@ -122,20 +145,17 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
             Examples:
-            # Analyze data with text column
-            python cli.py --data-file products.csv --text-column review --all
-            
-            # Clean and analyze
-            python cli.py --data-file data.csv --text-column comments --clean --all
-            
-            # Correlate rating with text length
-            python cli.py --data-file reviews.csv --text-column text --correlate rating --all
-            
-            # Separate text file
-            python cli.py --data-file sales.csv --text-file feedback.txt --all
-            
-            # Save report
-            python cli.py --data-file data.csv --text-column text --all --output report.txt
+                # Full analysis with sentiment
+                python cli.py --data-file products.csv --text-column review --all
+                
+                # Sentiment + correlation with rating
+                python cli.py --data-file reviews.csv --text-column text --sentiment --correlate rating
+                
+                # Create visualizations
+                python cli.py --data-file data.csv --text-column feedback --all --visualize
+                
+                # Export results
+                python cli.py --data-file data.csv --text-column text --all --export csv
         """
     )
     
@@ -160,6 +180,13 @@ def main():
                        help='Analyze structured data')
     parser.add_argument('--analyze-text', action='store_true',
                        help='Analyze text data')
+    parser.add_argument('--sentiment', action='store_true',
+                       help='Analyze sentiment of text')
+    parser.add_argument('--visualize', action='store_true',
+                       help='Create visualization dashboard')
+    parser.add_argument('--export', type=str,
+                       choices=['csv', 'json', 'excel'],
+                       help='Export results to file')
     parser.add_argument('--correlate', type=str,
                        help='Correlate specified column with text length')
     

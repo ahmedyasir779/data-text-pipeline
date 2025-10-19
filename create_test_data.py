@@ -7,35 +7,40 @@ from pathlib import Path
 np.random.seed(42)
 
 # Sample product reviews (varying lengths)
-reviews = [
-    # Short reviews (negative)
-    "Terrible product. Don't buy.",
-    "Not worth it.",
-    "Broke after one week.",
-    "Very disappointed.",
-    "Poor quality.",
-    
-    # Medium reviews (mixed)
-    "It's okay but nothing special. Works as expected.",
-    "Decent product for the price. Had some minor issues.",
-    "Good but could be better. Missing some features.",
-    "Average quality. Not bad but not great either.",
-    "Works fine. Installation was a bit tricky.",
-    
-    # Long reviews (positive)
-    "Absolutely love this product! The quality is outstanding and it exceeded all my expectations. Been using it for months now with zero issues. Highly recommend to anyone looking for reliability and performance.",
-    "Best purchase I've made this year. The build quality is exceptional, features are exactly what I needed, and customer service was fantastic. Worth every penny. Will definitely buy from this brand again.",
-    "Incredible product! I was skeptical at first but after using it daily for several weeks, I'm completely sold. The attention to detail is remarkable and it just works flawlessly. My colleagues are asking where I got it.",
-    "Five stars all the way! This has made my life so much easier. The design is intuitive, setup was straightforward, and performance is top-notch. Can't imagine going back to my old setup now.",
-    "Exceeded expectations in every way. I did extensive research before buying and this was the best choice. The quality, functionality, and value are all exceptional. Already recommended to three friends.",
+# Add more varied reviews at the top
+negative_reviews = [
+    "Terrible product. Complete waste of money. Don't buy this!",
+    "Broke after two days. Very disappointed with the quality.",
+    "Not worth it at all. Save your money.",
+    "Worst purchase ever. Customer service was unhelpful too.",
+    "Cheap materials, poor design. Regret buying this.",
 ]
+
+neutral_reviews = [
+    "It's okay. Nothing special but does the job.",
+    "Average product. Works as described but nothing impressive.",
+    "Decent for the price. Not great, not terrible.",
+    "It works. That's about all I can say.",
+    "Meets basic expectations. Could be better.",
+]
+
+positive_reviews = [
+    "Love it! Excellent quality and great value for money. Highly recommend!",
+    "Best purchase I've made this year. Works perfectly and looks amazing.",
+    "Outstanding product! Exceeded all my expectations. Five stars!",
+    "Incredible! Fast shipping, great packaging, and the product is fantastic.",
+    "Absolutely perfect. Been using it daily and it's still like new.",
+]
+
+all_reviews = negative_reviews + neutral_reviews + positive_reviews
+
 
 # Generate 50 products with realistic patterns
 data = []
 
 for i in range(50):
     # Pick a random review
-    review = np.random.choice(reviews)
+    review = np.random.choice(all_reviews)
     
     # Generate rating based on review length (positive correlation)
     # Longer reviews tend to be more positive

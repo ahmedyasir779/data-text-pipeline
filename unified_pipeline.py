@@ -2,6 +2,9 @@ import pandas as pd
 import numpy as np
 from typing import List, Dict, Optional, Union
 from pathlib import Path
+from textblob import TextBlob
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 class UnifiedPipeline:
     def __init__(self):
@@ -225,6 +228,303 @@ class UnifiedPipeline:
         
         return self
     
+    def analyze_sentiment(self) -> 'UnifiedPipeline':
+        """
+        Analyze sentiment of text data
+        
+        Returns:
+            Self for method chaining
+        """
+        if not self.text_data:
+            print("⚠ No text data to analyze sentiment")
+            return self
+        
+        print("Analyzing sentiment...")
+        
+        sentiments = []
+        for text in self.text_data:
+            blob = TextBlob(text)
+            sentiment = {
+                'polarity': blob.sentiment.polarity,  # -1 (negative) to +1 (positive)
+                'subjectivity': blob.sentiment.subjectivity,  # 0 (objective) to 1 (subjective)
+            }
+            sentiments.append(sentiment)
+        
+        # Calculate averages
+        avg_polarity = sum(s['polarity'] for s in sentiments) / len(sentiments)
+        avg_subjectivity = sum(s['subjectivity'] for s in sentiments) / len(sentiments)
+        
+        # Categorize sentiments
+        positive = sum(1 for s in sentiments if s['polarity'] > 0.1)
+        neutral = sum(1 for s in sentiments if -0.1 <= s['polarity'] <= 0.1)
+        negative = sum(1 for s in sentiments if s['polarity'] < -0.1)
+        
+        self.results['sentiment'] = {
+            'sentiments': sentiments,
+            'avg_polarity': avg_polarity,
+            'avg_subjectivity': avg_subjectivity,
+            'positive_count': positive,
+            'neutral_count': neutral,
+            'negative_count': negative,
+            'total': len(sentiments)
+        }
+        
+        print(f"✓ Sentiment analysis complete")
+        print(f"  Positive: {positive} ({positive/len(sentiments)*100:.1f}%)")
+        print(f"  Neutral: {neutral} ({neutral/len(sentiments)*100:.1f}%)")
+        print(f"  Negative: {negative} ({negative/len(sentiments)*100:.1f}%)")
+        print(f"  Avg polarity: {avg_polarity:.3f}")
+        
+        return self
+    
+    def correlate_sentiment_with_column(self, column_name: str) -> 'UnifiedPipeline':
+        """
+        Correlate sentiment with a numeric column
+        
+        Example: Does positive sentiment correlate with higher ratings?
+        
+        Args:
+            column_name: Name of numeric column to correlate
+            
+        Returns:
+            Self for method chaining
+        """
+        if 'sentiment' not in self.results:
+            print("⚠ Run analyze_sentiment() first")
+            return self
+        
+        if self.data_df is None or column_name not in self.data_df.columns:
+            print(f"⚠ Column '{column_name}' not found")
+            return self
+        
+        sentiments = self.results['sentiment']['sentiments']
+        polarities = [s['polarity'] for s in sentiments]
+        
+        # Make sure lengths match
+        if len(polarities) != len(self.data_df):
+            print("⚠ Sentiment and data lengths don't match")
+            return self
+        
+        # Calculate correlation
+        column_values = self.data_df[column_name].values
+        correlation = np.corrcoef(column_values, polarities)[0, 1]
+        
+        if 'correlations' not in self.results:
+            self.results['correlations'] = {}
+        
+        self.results['correlations']['sentiment_' + column_name] = {
+            'column': column_name,
+            'correlation': correlation,
+            'type': 'sentiment_polarity'
+        }
+        
+        print(f"✓ Correlation between {column_name} and sentiment: {correlation:.3f}")
+        
+        # Interpretation
+        if correlation > 0.7:
+            print("  → Strong positive correlation")
+        elif correlation > 0.4:
+            print("  → Moderate positive correlation")
+        elif correlation > 0.2:
+            print("  → Weak positive correlation")
+        elif correlation > -0.2:
+            print("  → Very weak/no correlation")
+        elif correlation > -0.4:
+            print("  → Weak negative correlation")
+        elif correlation > -0.7:
+            print("  → Moderate negative correlation")
+        else:
+            print("  → Strong negative correlation")
+        
+        return self
+    
+    def create_visualizations(self, output_dir: str = 'output') -> 'UnifiedPipeline':
+        """
+        Create visualizations of the analysis
+        
+        Args:
+            output_dir: Directory to save visualizations
+            
+        Returns:
+            Self for method chaining
+        """
+        Path(output_dir).mkdir(parents=True, exist_ok=True)
+        
+        # Set style
+        sns.set_style("whitegrid")
+        
+        # Create figure with subplots
+        fig = plt.figure(figsize=(16, 10))
+        
+        plot_count = 0
+        
+        # Plot 1: Data distribution (if numeric columns exist)
+        if self.data_df is not None:
+            numeric_cols = self.data_df.select_dtypes(include=[np.number]).columns
+            if len(numeric_cols) > 0:
+                plot_count += 1
+                ax1 = plt.subplot(2, 3, 1)
+                
+                # Show distribution of first numeric column
+                col = numeric_cols[0]
+                self.data_df[col].hist(bins=20, ax=ax1, color='skyblue', edgecolor='black')
+                ax1.set_title(f'Distribution of {col}', fontsize=12, fontweight='bold')
+                ax1.set_xlabel(col)
+                ax1.set_ylabel('Frequency')
+        
+        # Plot 2: Sentiment distribution
+        if 'sentiment' in self.results:
+            plot_count += 1
+            ax2 = plt.subplot(2, 3, 2)
+            
+            sentiment = self.results['sentiment']
+            categories = ['Positive', 'Neutral', 'Negative']
+            counts = [sentiment['positive_count'], 
+                     sentiment['neutral_count'], 
+                     sentiment['negative_count']]
+            colors = ['green', 'gray', 'red']
+            
+            ax2.bar(categories, counts, color=colors, alpha=0.7, edgecolor='black')
+            ax2.set_title('Sentiment Distribution', fontsize=12, fontweight='bold')
+            ax2.set_ylabel('Count')
+            
+            # Add percentage labels
+            total = sum(counts)
+            for i, (cat, count) in enumerate(zip(categories, counts)):
+                percentage = count / total * 100
+                ax2.text(i, count + 0.5, f'{percentage:.1f}%', 
+                        ha='center', va='bottom', fontweight='bold')
+        
+        # Plot 3: Sentiment polarity histogram
+        if 'sentiment' in self.results:
+            plot_count += 1
+            ax3 = plt.subplot(2, 3, 3)
+            
+            polarities = [s['polarity'] for s in self.results['sentiment']['sentiments']]
+            ax3.hist(polarities, bins=20, color='purple', alpha=0.7, edgecolor='black')
+            ax3.axvline(x=0, color='red', linestyle='--', linewidth=2, label='Neutral')
+            ax3.set_title('Sentiment Polarity Distribution', fontsize=12, fontweight='bold')
+            ax3.set_xlabel('Polarity (-1=Negative, +1=Positive)')
+            ax3.set_ylabel('Frequency')
+            ax3.legend()
+        
+        # Plot 4: Text length distribution
+        if self.text_data:
+            plot_count += 1
+            ax4 = plt.subplot(2, 3, 4)
+            
+            lengths = [len(text.split()) for text in self.text_data]
+            ax4.hist(lengths, bins=20, color='orange', alpha=0.7, edgecolor='black')
+            ax4.set_title('Text Length Distribution', fontsize=12, fontweight='bold')
+            ax4.set_xlabel('Word Count')
+            ax4.set_ylabel('Frequency')
+        
+        # Plot 5: Correlation scatter (if exists)
+        if 'correlations' in self.results and self.data_df is not None:
+            for corr_name, corr_data in self.results['correlations'].items():
+                plot_count += 1
+                ax5 = plt.subplot(2, 3, 5)
+                
+                if corr_data['type'] == 'sentiment_polarity':
+                    column = corr_data['column']
+                    polarities = [s['polarity'] for s in self.results['sentiment']['sentiments']]
+                    
+                    ax5.scatter(self.data_df[column], polarities, 
+                              alpha=0.6, color='teal', edgecolor='black')
+                    ax5.set_title(f'{column} vs Sentiment\n(r={corr_data["correlation"]:.3f})', 
+                                fontsize=12, fontweight='bold')
+                    ax5.set_xlabel(column)
+                    ax5.set_ylabel('Sentiment Polarity')
+                    
+                    # Add trend line
+                    z = np.polyfit(self.data_df[column], polarities, 1)
+                    p = np.poly1d(z)
+                    ax5.plot(self.data_df[column], p(self.data_df[column]), 
+                           "r--", alpha=0.8, linewidth=2)
+                
+                break  # Only show first correlation
+        
+        # Plot 6: Top words (if text statistics exist)
+        if 'text_statistics' in self.results:
+            plot_count += 1
+            ax6 = plt.subplot(2, 3, 6)
+            
+            top_words = self.results['text_statistics']['top_10_words']
+            words = [w[0] for w in top_words[:8]]  # Top 8 for readability
+            counts = [w[1] for w in top_words[:8]]
+            
+            ax6.barh(words, counts, color='steelblue', edgecolor='black')
+            ax6.set_title('Top 8 Most Common Words', fontsize=12, fontweight='bold')
+            ax6.set_xlabel('Frequency')
+            ax6.invert_yaxis()
+        
+        plt.tight_layout()
+        
+        # Save
+        output_path = Path(output_dir) / 'analysis_dashboard.png'
+        plt.savefig(output_path, dpi=300, bbox_inches='tight')
+        plt.close()
+        
+        print(f"✓ Visualizations saved to {output_path}")
+        
+        return self
+    
+    def export_results(self, format: str = 'csv', output_dir: str = 'output') -> 'UnifiedPipeline':
+        """
+        Export results to various formats
+        
+        Args:
+            format: 'csv', 'json', or 'excel'
+            output_dir: Directory to save exports
+            
+        Returns:
+            Self for method chaining
+        """
+        Path(output_dir).mkdir(parents=True, exist_ok=True)
+        
+        # Create results DataFrame
+        if self.data_df is not None:
+            results_df = self.data_df.copy()
+            
+            # Add sentiment if available
+            if 'sentiment' in self.results:
+                sentiments = self.results['sentiment']['sentiments']
+                results_df['sentiment_polarity'] = [s['polarity'] for s in sentiments]
+                results_df['sentiment_subjectivity'] = [s['subjectivity'] for s in sentiments]
+                
+                # Add sentiment category
+                def categorize_sentiment(polarity):
+                    if polarity > 0.1:
+                        return 'Positive'
+                    elif polarity < -0.1:
+                        return 'Negative'
+                    else:
+                        return 'Neutral'
+                
+                results_df['sentiment_category'] = results_df['sentiment_polarity'].apply(categorize_sentiment)
+            
+            # Add text length if text data exists
+            if self.text_data:
+                results_df['text_word_count'] = [len(text.split()) for text in self.text_data]
+            
+            # Export based on format
+            if format == 'csv':
+                output_path = Path(output_dir) / 'results.csv'
+                results_df.to_csv(output_path, index=False)
+            elif format == 'json':
+                output_path = Path(output_dir) / 'results.json'
+                results_df.to_json(output_path, orient='records', indent=2)
+            elif format == 'excel':
+                output_path = Path(output_dir) / 'results.xlsx'
+                results_df.to_excel(output_path, index=False)
+            else:
+                print(f"⚠ Unknown format: {format}")
+                return self
+            
+            print(f"✓ Results exported to {output_path}")
+        
+        return self
+    
     def correlate_data_with_text_length(self, data_column: str) -> 'UnifiedPipeline':
         """
         Correlate numeric data with text length
@@ -308,6 +608,19 @@ class UnifiedPipeline:
             for word, count in stats['top_10_words']:
                 report.append(f"  {word}: {count}")
         
+        # Sentiment analysis
+        if 'sentiment' in self.results:
+            report.append("\n\n SENTIMENT ANALYSIS")
+            report.append("-" * 60)
+            
+            sentiment = self.results['sentiment']
+            report.append(f"Average polarity: {sentiment['avg_polarity']:.3f}")
+            report.append(f"Average subjectivity: {sentiment['avg_subjectivity']:.3f}")
+            report.append(f"\nSentiment breakdown:")
+            report.append(f"  Positive: {sentiment['positive_count']} ({sentiment['positive_count']/sentiment['total']*100:.1f}%)")
+            report.append(f"  Neutral: {sentiment['neutral_count']} ({sentiment['neutral_count']/sentiment['total']*100:.1f}%)")
+            report.append(f"  Negative: {sentiment['negative_count']} ({sentiment['negative_count']/sentiment['total']*100:.1f}%)")
+
         # Correlation
         if 'correlation' in self.results:
             report.append("\n\n CORRELATION ANALYSIS")
