@@ -1,0 +1,25 @@
+{
+  "pipeline": {
+    "use_cache": true,
+    "clean_strategy": "drop",
+    "analyze_sentiment": true,
+    "extract_entities": true,
+    "extract_keywords": true,
+    "detect_topics": true,
+    "analyze_complexity": true
+  },
+  "visualization": {
+    "create_dashboard": true,
+    "dpi": 300,
+    "style": "whitegrid"
+  },
+  "export": {
+    "format": "csv",
+    "include_sentiment": true,
+    "include_entities": false
+  },
+  "output": {
+    "directory": "output",
+    "report_name": "unified_report.txt"
+  }
+}

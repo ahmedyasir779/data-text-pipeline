@@ -27,9 +27,35 @@ def print_header(msg):
 def run_pipeline(args):
     print_header("UNIFIED DATA + TEXT PIPELINE")
 
+    config = None
+    if args.config:
+        from config_manager import ConfigManager
+        config = ConfigManager.load_config(args.config)
+        print_info(f"Loaded configuration from {args.config}")
+
     try:
         # Initialize pipeline
+        use_cache = not args.no_cache
         pipeline = UnifiedPipeline()
+        
+        # Clear cache if requested
+        if args.clear_cache and pipeline.cache:
+            pipeline.cache.clear()
+            print_success("Cache cleared")
+
+        # Batch mode
+        if args.batch:
+            import glob
+            files = glob.glob(f"{args.batch}/*.csv")
+            print_info(f"Found {len(files)} files in {args.batch}")
+            
+            if not args.text_column:
+                print_error("--text-column required for batch mode")
+                sys.exit(1)
+            
+            results = pipeline.process_batch(files, args.text_column)
+            print_success(f"Processed {results['successful']}/{results['total_files']} files")
+            return
         
         # Step 1: Load structured data
         if args.data_file:
@@ -233,6 +259,15 @@ def main():
                        help='Detect topics in text')
     parser.add_argument('--complexity', action='store_true',
                        help='Analyze text complexity and readability')
+    
+    parser.add_argument('--no-cache', action='store_true',
+                       help='Disable caching')
+    parser.add_argument('--clear-cache', action='store_true',
+                       help='Clear cache before running')
+    parser.add_argument('--config', type=str,
+                       help='Load settings from config file')
+    parser.add_argument('--batch', type=str,
+                       help='Process all files in directory (batch mode)')
     
     # Output
     parser.add_argument('--output', '-o', type=str,

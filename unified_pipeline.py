@@ -7,15 +7,33 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 from advanced_nlp import AdvancedNLP
+from cache_manager import CacheManager
+from progress_tracker import ProgressTracker
+from tqdm import tqdm
 
 class UnifiedPipeline:
-    def __init__(self):
+    def __init__(self, use_cache: bool = True):
+        """
+        Initialize the unified pipeline
+        
+        Args:
+            use_cache: Whether to use caching (default: True)
+        """
         self.data_df = None
         self.text_data = []
         self.results = {}
-        self.advanced_nlp = AdvancedNLP() 
-        print("UnifiedPipeline initialized.")
-
+        self.advanced_nlp = AdvancedNLP()
+        
+        # Caching
+        self.use_cache = use_cache
+        if use_cache:
+            self.cache = CacheManager()
+        else:
+            self.cache = None
+        
+        print("✓ Unified Pipeline initialized")
+        if use_cache:
+            print("  Cache enabled")
     
     # ===============================
     # DATA LOADING
@@ -26,6 +44,20 @@ class UnifiedPipeline:
         if not path.exists():
             raise FileNotFoundError(f"File not found: {file_path}")
         
+         # Check cache
+        cache_key = None
+        if self.cache:
+            cache_key = self.cache._generate_key(file_path)
+            cached_data = self.cache.get(cache_key, category='data')
+            
+            if cached_data is not None:
+                self.data_df = cached_data
+                print(f"✓ Loaded from cache: {len(self.data_df)} rows, {len(self.data_df.columns)} columns")
+                return self
+        
+        # Load from file
+        print(f" Loading {path.suffix} file...")
+
         if path.suffix == '.csv':
             self.data_df = pd.read_csv(file_path)
         elif path.suffix in ['.xls', '.xlsx']:
@@ -35,6 +67,10 @@ class UnifiedPipeline:
         else:
             raise ValueError(f"Unsupported file type: {path.suffix}")
         
+        # Cache the result
+        if self.cache and cache_key:
+            self.cache.set(cache_key, self.data_df, category='data')
+
         print(f"Loaded structured data : {len(self.data_df)} rows, {len(self.data_df.columns)} columns.")
 
         return self
@@ -241,6 +277,17 @@ class UnifiedPipeline:
             print("⚠ No text data to analyze sentiment")
             return self
         
+        # Check cache
+        cache_key = None
+        if self.cache:
+            cache_key = self.cache._generate_key(str(self.text_data))
+            cached_sentiment = self.cache.get(cache_key, category='nlp')
+            
+            if cached_sentiment is not None:
+                self.results['sentiment'] = cached_sentiment
+                print("✓ Loaded sentiment analysis from cache")
+                return self
+        
         print("Analyzing sentiment...")
         
         sentiments = []
@@ -261,7 +308,7 @@ class UnifiedPipeline:
         neutral = sum(1 for s in sentiments if -0.1 <= s['polarity'] <= 0.1)
         negative = sum(1 for s in sentiments if s['polarity'] < -0.1)
         
-        self.results['sentiment'] = {
+        sentiment_results = {
             'sentiments': sentiments,
             'avg_polarity': avg_polarity,
             'avg_subjectivity': avg_subjectivity,
@@ -271,6 +318,13 @@ class UnifiedPipeline:
             'total': len(sentiments)
         }
         
+        self.results['sentiment'] = sentiment_results
+        
+
+        # Cache the result
+        if self.cache and cache_key:
+            self.cache.set(cache_key, sentiment_results, category='nlp')
+
         print(f"✓ Sentiment analysis complete")
         print(f"  Positive: {positive} ({positive/len(sentiments)*100:.1f}%)")
         print(f"  Neutral: {neutral} ({neutral/len(sentiments)*100:.1f}%)")
@@ -280,20 +334,30 @@ class UnifiedPipeline:
         return self
 
     def extract_entities(self) -> 'UnifiedPipeline':
-        """
-        Extract named entities from text
-        
-        Returns:
-            Self for method chaining
-        """
+        """Extract named entities from text with progress"""
         if not self.text_data:
             print("⚠ No text data for entity extraction")
             return self
+        
+        # Check cache
+        cache_key = None
+        if self.cache:
+            cache_key = self.cache._generate_key(str(self.text_data) + '_entities')
+            cached_entities = self.cache.get(cache_key, category='nlp')
+            
+            if cached_entities is not None:
+                self.results['entities'] = cached_entities
+                print("✓ Loaded entity extraction from cache")
+                return self
         
         print("Extracting named entities...")
         entities = self.advanced_nlp.extract_entities(self.text_data)
         
         self.results['entities'] = entities
+        
+        # Cache the result
+        if self.cache and cache_key:
+            self.cache.set(cache_key, entities, category='nlp')
         
         print(f"✓ Entity extraction complete")
         for entity_type, data in entities.items():
@@ -573,6 +637,57 @@ class UnifiedPipeline:
         print(f"✓ Visualizations saved to {output_path}")
         
         return self
+    
+    def process_batch(self, file_paths: List[str], text_column: str) -> Dict:
+        """
+        Process multiple files in batch
+        
+        Args:
+            file_paths: List of file paths to process
+            text_column: Column containing text data
+            
+        Returns:
+            Dictionary with aggregated results
+        """
+        print(f"🔄 Batch processing {len(file_paths)} files...")
+        
+        all_results = []
+        
+        for file_path in ProgressTracker.track(file_paths, "Processing files", "file"):
+            try:
+                # Reset pipeline
+                self.data_df = None
+                self.text_data = []
+                self.results = {}
+                
+                # Process file
+                self.load_structured_data(file_path)
+                self.load_text_column(text_column)
+                self.analyze_data()
+                self.analyze_text()
+                self.analyze_sentiment()
+                
+                # Store results
+                all_results.append({
+                    'file': file_path,
+                    'results': self.results.copy()
+                })
+                
+            except Exception as e:
+                print(f"⚠ Error processing {file_path}: {e}")
+                all_results.append({
+                    'file': file_path,
+                    'error': str(e)
+                })
+        
+        print(f"✓ Batch processing complete: {len(all_results)} files processed")
+        
+        return {
+            'total_files': len(file_paths),
+            'successful': sum(1 for r in all_results if 'error' not in r),
+            'failed': sum(1 for r in all_results if 'error' in r),
+            'results': all_results
+        }
     
     def export_results(self, format: str = 'csv', output_dir: str = 'output') -> 'UnifiedPipeline':
         """

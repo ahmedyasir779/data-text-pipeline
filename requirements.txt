@@ -38,6 +38,7 @@ Pygments==2.19.2
 pyparsing==3.2.5
 python-dateutil==2.9.0.post0
 pytz==2025.2
+PyYAML==6.0.3
 rake-nltk==1.0.6
 regex==2025.9.18
 requests==2.32.5
