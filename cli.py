@@ -85,17 +85,50 @@ def run_pipeline(args):
                     pipeline.correlate_sentiment_with_column(args.correlate)
             else:
                 print_warning("No text data for sentiment analysis")
+        # Named entity recognition
+        if args.entities or args.all:
+            if pipeline.text_data:
+                print_header("NAMED ENTITY RECOGNITION")
+                pipeline.extract_entities()
+            else:
+                print_warning("No text data for entity extraction")
         
+        # Keyword extraction
+        if args.keywords or args.all:
+            if pipeline.text_data:
+                print_header("KEYWORD EXTRACTION")
+                method = args.keywords if args.keywords else 'tfidf'
+                pipeline.extract_keywords(method=method, top_n=15)
+            else:
+                print_warning("No text data for keyword extraction")
+        
+        # Topic detection
+        if args.topics or args.all:
+            if pipeline.text_data:
+                print_header("TOPIC DETECTION")
+                pipeline.detect_topics()
+            else:
+                print_warning("No text data for topic detection")
+        
+        # Complexity analysis
+        if args.complexity or args.all:
+            if pipeline.text_data:
+                print_header("TEXT COMPLEXITY ANALYSIS")
+                pipeline.analyze_complexity()
+            else:
+                print_warning("No text data for complexity analysis")
+
         # Create visualizations
         if args.visualize or args.all:
             print_header("CREATING VISUALIZATIONS")
-            pipeline.create_visualizations(args.output.replace('.txt', '').replace('unified_report', 'output'))
+            output_dir = Path(args.output).parent
+            pipeline.create_visualizations(str(output_dir))
         
         # Export results
         if args.export:
             print_header(f"EXPORTING TO {args.export.upper()}")
             pipeline.export_results(format=args.export, 
-                                   output_dir=args.output.replace('.txt', '').replace('unified_report', 'output'))
+                                   output_dir=Path(args.output).parent)
             
         # Step 5: Correlation analysis
         if args.correlate:
@@ -145,17 +178,17 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
             Examples:
-                # Full analysis with sentiment
+                # Full analysis with all NLP features
                 python cli.py --data-file products.csv --text-column review --all
                 
-                # Sentiment + correlation with rating
-                python cli.py --data-file reviews.csv --text-column text --sentiment --correlate rating
+                # Extract entities and keywords
+                python cli.py --data-file reviews.csv --text-column text --entities --keywords tfidf
                 
-                # Create visualizations
-                python cli.py --data-file data.csv --text-column feedback --all --visualize
+                # Analyze topics and complexity
+                python cli.py --data-file feedback.csv --text-column comments --topics --complexity
                 
-                # Export results
-                python cli.py --data-file data.csv --text-column text --all --export csv
+                # Complete advanced analysis
+                python cli.py --data-file data.csv --text-column text --sentiment --entities --keywords rake --topics --visualize
         """
     )
     
@@ -187,8 +220,19 @@ def main():
     parser.add_argument('--export', type=str,
                        choices=['csv', 'json', 'excel'],
                        help='Export results to file')
+    
     parser.add_argument('--correlate', type=str,
                        help='Correlate specified column with text length')
+    
+    parser.add_argument('--entities', action='store_true',
+                       help='Extract named entities (people, companies, locations)')
+    parser.add_argument('--keywords', type=str,
+                       choices=['rake', 'tfidf'],
+                       help='Extract keywords using specified method')
+    parser.add_argument('--topics', action='store_true',
+                       help='Detect topics in text')
+    parser.add_argument('--complexity', action='store_true',
+                       help='Analyze text complexity and readability')
     
     # Output
     parser.add_argument('--output', '-o', type=str,

@@ -6,12 +6,14 @@ from textblob import TextBlob
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+from advanced_nlp import AdvancedNLP
+
 class UnifiedPipeline:
     def __init__(self):
         self.data_df = None
         self.text_data = []
         self.results = {}
-
+        self.advanced_nlp = AdvancedNLP() 
         print("UnifiedPipeline initialized.")
 
     
@@ -276,6 +278,107 @@ class UnifiedPipeline:
         print(f"  Avg polarity: {avg_polarity:.3f}")
         
         return self
+
+    def extract_entities(self) -> 'UnifiedPipeline':
+        """
+        Extract named entities from text
+        
+        Returns:
+            Self for method chaining
+        """
+        if not self.text_data:
+            print("⚠ No text data for entity extraction")
+            return self
+        
+        print("Extracting named entities...")
+        entities = self.advanced_nlp.extract_entities(self.text_data)
+        
+        self.results['entities'] = entities
+        
+        print(f"✓ Entity extraction complete")
+        for entity_type, data in entities.items():
+            print(f"  {entity_type}: {data['total']} mentions ({data['unique']} unique)")
+        
+        return self
+    
+    def extract_keywords(self, method: str = 'tfidf', top_n: int = 10) -> 'UnifiedPipeline':
+        """
+        Extract keywords from text
+        
+        Args:
+            method: 'rake' or 'tfidf'
+            top_n: Number of keywords to extract
+            
+        Returns:
+            Self for method chaining
+        """
+        if not self.text_data:
+            print("⚠ No text data for keyword extraction")
+            return self
+        
+        print(f"Extracting keywords using {method.upper()}...")
+        
+        if method == 'rake':
+            keywords = self.advanced_nlp.extract_keywords(self.text_data, top_n=top_n)
+        else:  # tfidf
+            keywords = self.advanced_nlp.extract_keywords_tfidf(self.text_data, top_n=top_n)
+        
+        self.results['keywords'] = {
+            'method': method,
+            'keywords': keywords
+        }
+        
+        print(f"✓ Extracted {len(keywords)} keywords")
+        print("  Top 5:")
+        for keyword, score in keywords[:5]:
+            print(f"    {keyword}: {score:.3f}")
+        
+        return self
+    
+    def detect_topics(self) -> 'UnifiedPipeline':
+        """
+        Detect topics in text
+        
+        Returns:
+            Self for method chaining
+        """
+        if not self.text_data:
+            print("⚠ No text data for topic detection")
+            return self
+        
+        print("Detecting topics...")
+        topics = self.advanced_nlp.detect_topics(self.text_data)
+        
+        self.results['topics'] = topics
+        
+        print(f"✓ Detected {len(topics)} topics")
+        for topic in topics.keys():
+            print(f"  • {topic}")
+        
+        return self
+    
+    def analyze_complexity(self) -> 'UnifiedPipeline':
+        """
+        Analyze text complexity and readability
+        
+        Returns:
+            Self for method chaining
+        """
+        if not self.text_data:
+            print("⚠ No text data for complexity analysis")
+            return self
+        
+        print("Analyzing text complexity...")
+        complexity = self.advanced_nlp.analyze_text_complexity(self.text_data)
+        
+        self.results['complexity'] = complexity
+        
+        print(f"✓ Complexity analysis complete")
+        print(f"  Reading level: {complexity['interpretation']}")
+        print(f"  Flesch score: {complexity['avg_flesch_reading_ease']}")
+        print(f"  Grade level: {complexity['avg_flesch_kincaid_grade']}")
+        
+        return self
     
     def correlate_sentiment_with_column(self, column_name: str) -> 'UnifiedPipeline':
         """
@@ -460,8 +563,10 @@ class UnifiedPipeline:
         
         plt.tight_layout()
         
+        # raise SystemExit(output_dir)
         # Save
         output_path = Path(output_dir) / 'analysis_dashboard.png'
+        
         plt.savefig(output_path, dpi=300, bbox_inches='tight')
         plt.close()
         
@@ -620,6 +725,52 @@ class UnifiedPipeline:
             report.append(f"  Positive: {sentiment['positive_count']} ({sentiment['positive_count']/sentiment['total']*100:.1f}%)")
             report.append(f"  Neutral: {sentiment['neutral_count']} ({sentiment['neutral_count']/sentiment['total']*100:.1f}%)")
             report.append(f"  Negative: {sentiment['negative_count']} ({sentiment['negative_count']/sentiment['total']*100:.1f}%)")
+
+        if 'entities' in self.results:
+            report.append("\n\n NAMED ENTITIES")
+            report.append("-" * 60)
+            
+            entities = self.results['entities']
+            for entity_type, data in entities.items():
+                report.append(f"\n{entity_type}:")
+                report.append(f"  Total mentions: {data['total']}")
+                report.append(f"  Unique entities: {data['unique']}")
+                report.append("  Top mentions:")
+                for entity, count in data['top_5']:
+                    report.append(f"    • {entity}: {count}")
+        
+        # Keywords
+        if 'keywords' in self.results:
+            report.append("\n\n KEYWORDS")
+            report.append("-" * 60)
+            
+            kw = self.results['keywords']
+            report.append(f"Method: {kw['method'].upper()}")
+            report.append("\nTop keywords:")
+            for keyword, score in kw['keywords'][:10]:
+                report.append(f"  • {keyword}: {score:.3f}")
+        
+        # Topics
+        if 'topics' in self.results:
+            report.append("\n\n TOPICS")
+            report.append("-" * 60)
+            
+            topics = self.results['topics']
+            for topic, keywords in topics.items():
+                report.append(f"\n{topic.upper()}:")
+                for keyword, score in keywords[:5]:
+                    report.append(f"  • {keyword}: {score:.3f}")
+        
+        # Complexity
+        if 'complexity' in self.results:
+            report.append("\n\n TEXT COMPLEXITY")
+            report.append("-" * 60)
+            
+            comp = self.results['complexity']
+            report.append(f"Flesch Reading Ease: {comp['avg_flesch_reading_ease']}")
+            report.append(f"Grade Level: {comp['avg_flesch_kincaid_grade']}")
+            report.append(f"Interpretation: {comp['interpretation']}")
+            report.append(f"Avg words/sentence: {comp['avg_words_per_sentence']}")
 
         # Correlation
         if 'correlation' in self.results:
