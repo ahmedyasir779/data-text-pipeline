@@ -45,10 +45,11 @@ class TestAdvancedNLP:
         assert isinstance(keywords, list)
         assert len(keywords) <= 5
         
-        # Each keyword should be (phrase, score) tuple
-        for keyword, score in keywords:
+        # Now returns (keyword, score) - consistent with TF-IDF
+        for keyword, score in keywords:  # ← Back to original order
             assert isinstance(keyword, str)
             assert isinstance(score, (int, float))
+            assert score > 0
     
     def test_extract_keywords_tfidf(self, nlp, sample_texts):
         """Test keyword extraction with TF-IDF"""

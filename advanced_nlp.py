@@ -115,9 +115,13 @@ class AdvancedNLP:
         
         # Extract keywords
         self.rake.extract_keywords_from_text(combined_text)
-        keywords = self.rake.get_ranked_phrases_with_scores()
+        keywords_raw = self.rake.get_ranked_phrases_with_scores()
         
-        return keywords[:top_n]
+        # RAKE returns (score, phrase) - reverse to (phrase, score) for consistency
+        keywords = [(phrase, score) for score, phrase in keywords_raw[:top_n]]
+        
+        return keywords
+    
     
     def extract_keywords_tfidf(self, texts: List[str], top_n: int = 10) -> List[Tuple[str, float]]:
         """
