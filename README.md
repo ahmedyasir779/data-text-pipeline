@@ -95,6 +95,55 @@ pip install -r requirements.txt
 python -m spacy download en_core_web_sm
 python -m textblob.download_corpora
 ```
+## 🐳 Docker Usage
+
+### Quick Start with Docker
+```bash
+# Build image
+docker build -t data-text-pipeline .
+
+# Run pipeline
+docker run --rm \
+  -v $(pwd)/data:/app/data \
+  -v $(pwd)/output:/app/output \
+  data-text-pipeline \
+  python cli.py --data-file /app/data/sample.csv --text-column text --all
+```
+
+### Using Helper Script
+
+**Linux/Mac:**
+```bash
+./docker-run.sh --data-file /app/data/sample.csv --text-column text --all
+```
+
+**Windows:**
+```cmd
+docker-run.bat --data-file /app/data/sample.csv --text-column text --all
+```
+
+### Docker Hub
+
+Pull pre-built image:
+```bash
+docker pull YOUR_USERNAME/data-text-pipeline:latest
+docker run --rm YOUR_USERNAME/data-text-pipeline:latest python cli.py --help
+```
+
+### Volume Mounts
+
+- `/app/data` - Input data directory
+- `/app/output` - Output results
+- `/app/.cache` - Cache directory (optional, for performance)
+
+### Environment Variables
+```bash
+docker run --rm \
+  -e PIPELINE_CACHE_ENABLED=true \
+  -e PIPELINE_LOG_LEVEL=DEBUG \
+  data-text-pipeline \
+  python cli.py --data-file /app/data/sample.csv --text-column text --all
+```
 
 ### Basic Usage
 ```bash
