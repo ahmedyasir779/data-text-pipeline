@@ -13,3 +13,4 @@ output/*.html
 .coverage
 htmlcov/
 .env
+temp/
