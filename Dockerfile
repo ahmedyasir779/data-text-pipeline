@@ -60,7 +60,7 @@ RUN mkdir -p data output logs .cache
 ENV PYTHONUNBUFFERED=1
 
 # Expose port (for future web interface)
-EXPOSE 8501
+# EXPOSE 8501
 
 # Health check
 # HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \

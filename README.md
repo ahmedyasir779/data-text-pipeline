@@ -1,15 +1,25 @@
 # 🔗 Unified Data & Text Processing Pipeline
 
-> Professional-grade data analytics platform combining structured data processing with advanced NLP capabilities.
+> Production-grade data analytics platform combining structured data processing with advanced NLP.
+## 🌐 **LIVE DEMO**
+
+**👉 Try it now: [https://data-text-pipeline.onrender.com](https://data-text-pipeline.onrender.com)**
+
+No installation required - just upload your data and analyze!
+
+---
 
 ![Python Version](https://img.shields.io/badge/python-3.8%2B-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Tests](https://img.shields.io/badge/tests-passing-brightgreen)
 ![Coverage](https://img.shields.io/badge/coverage-75%25-yellow)
+![Deployment](https://img.shields.io/badge/deployment-live-success)
 
-[Live Demo](#) | [Documentation](docs/) | [API Reference](docs/API.md)
+[Live Demo](https://data-text-pipeline.onrender.com) | [Documentation](docs/) | [API Reference](docs/API.md)
 
 ---
+
+
 
 ## 📖 Table of Contents
 
