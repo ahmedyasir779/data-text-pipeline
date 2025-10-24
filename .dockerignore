@@ -1,51 +1,14 @@
-# .dockerignore - Files to exclude from Docker image
-
-# Virtual environments
 venv/
 env/
-.venv/
-
-# Python cache
 __pycache__/
 *.pyc
-*.pyo
-*.pyd
-.Python
-
-# Testing
-.pytest_cache/
-.coverage
-htmlcov/
-.tox/
-
-# IDEs
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Git
 .git/
 .gitignore
-
-# Logs and cache
-*.log
-logs/
-.cache/
-
-# Output files (users will mount their own)
-output/
-results/
-
-# Documentation (not needed in container)
+tests/
 docs/
 *.md
-LICENSE
-
-# Test files
-tests/
+.cache/
+output/
+temp/
+.pytest_cache/
+htmlcov/
