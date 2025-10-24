@@ -35,7 +35,7 @@ example1_data = {
 
 df1 = pd.DataFrame(example1_data)
 
-st.dataframe(df1, use_container_width=True)
+st.dataframe(df1, width="stretch")
 
 csv1 = df1.to_csv(index=False)
 st.download_button(
@@ -63,7 +63,7 @@ example2_data = {
 
 df2 = pd.DataFrame(example2_data)
 
-st.dataframe(df2, use_container_width=True)
+st.dataframe(df2, width="stretch")
 
 csv2 = df2.to_csv(index=False)
 st.download_button(
@@ -91,7 +91,7 @@ example3_data = {
 
 df3 = pd.DataFrame(example3_data)
 
-st.dataframe(df3, use_container_width=True)
+st.dataframe(df3, width="stretch")
 
 csv3 = df3.to_csv(index=False)
 st.download_button(

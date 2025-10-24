@@ -11,11 +11,11 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy Docker-specific requirements
-COPY requirements-docker.txt requirements.txt
+COPY requirements.txt .
 
 # Install Python dependencies
 RUN pip install --no-cache-dir --user -r requirements.txt
-
+RUN pip install --no-cache-dir --user streamlit
 # Download NLTK data
 RUN python -c "import nltk; \
     nltk.download('punkt', quiet=True); \

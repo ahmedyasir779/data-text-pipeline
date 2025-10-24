@@ -123,50 +123,109 @@ def display_keyword_results(results):
     """Display keyword extraction results"""
     st.markdown('<p class="sub-header">🔑 Top Keywords</p>', unsafe_allow_html=True)
     
-    keywords = results.get('keywords', [])
+    keyword_data = results.get('keywords', {})
     
-    if not keywords:
+    if not keyword_data:
         st.info("No keywords found. Run keyword extraction first.")
         return
     
-    # Create DataFrame
-    keyword_df = pd.DataFrame(keywords, columns=['Keyword', 'Score'])
-    keyword_df['Score'] = keyword_df['Score'].round(3)
+    # Extract the actual keywords list from the nested structure
+    if isinstance(keyword_data, dict):
+        # It's a dict with 'method' and 'keywords' keys
+        keyword_list = keyword_data.get('keywords', [])
+        method = keyword_data.get('method', 'unknown')
+        st.caption(f"Extraction method: {method.upper()}")
+    else:
+        # Fallback - assume it's already a list
+        keyword_list = keyword_data
     
-    # Display as chart
-    st.bar_chart(keyword_df.set_index('Keyword')['Score'])
+    if not keyword_list:
+        st.info("No keywords extracted.")
+        return
     
-    # Display as table
-    with st.expander("View keyword details"):
-        st.dataframe(keyword_df)
-
+    # Create DataFrame from list of tuples
+    try:
+        keyword_df = pd.DataFrame(keyword_list, columns=['Keyword', 'Score'])
+        
+        # Ensure Score is numeric
+        keyword_df['Score'] = pd.to_numeric(keyword_df['Score'], errors='coerce')
+        
+        # Remove duplicates (keep first occurrence)
+        keyword_df = keyword_df.drop_duplicates(subset=['Keyword'], keep='first')
+        
+        # Drop any rows with NaN scores
+        keyword_df = keyword_df.dropna(subset=['Score'])
+        
+        # Sort by score descending
+        keyword_df = keyword_df.sort_values('Score', ascending=False)
+        
+        # Take top 15
+        keyword_df = keyword_df.head(15)
+        
+        # Round scores for display
+        keyword_df['Score'] = keyword_df['Score'].round(3)
+        
+        if len(keyword_df) == 0:
+            st.warning("No valid keywords after processing.")
+            return
+        
+        # Display as chart
+        st.bar_chart(keyword_df.set_index('Keyword')['Score'])
+        
+        # Display as table
+        with st.expander("View keyword details"):
+            st.dataframe(keyword_df, width='stretch')
+            
+    except Exception as e:
+        st.error(f"Error displaying keywords: {e}")
+        st.write("Debug - keyword_list type:", type(keyword_list))
+        if keyword_list:
+            st.write("Debug - first item:", keyword_list[0])
 
 def display_topic_results(results):
     """Display topic detection results"""
     st.markdown('<p class="sub-header">📑 Detected Topics</p>', unsafe_allow_html=True)
     
-    topics = results.get('topics', {})
+    topic_data = results.get('topics', {})
+    
+    if not topic_data:
+        st.info("No topics found. Run topic detection first.")
+        return
+    
+    # Extract actual topics from nested structure if needed
+    if isinstance(topic_data, dict) and 'topics' in topic_data:
+        topics = topic_data['topics']
+    else:
+        topics = topic_data
     
     if not topics:
-        st.info("No topics found. Run topic detection first.")
+        st.info("No topics detected.")
         return
     
     for topic_name, keywords in topics.items():
         with st.expander(f"🏷️ {topic_name}"):
-            # Handle both list of strings and list of tuples
-            if keywords and isinstance(keywords[0], tuple):
-                # It's a list of (keyword, score) tuples
-                keyword_list = [kw for kw, score in keywords]
-                st.write("**Keywords:**", ", ".join(keyword_list))
-                
-                # Show scores
-                with st.expander("View keyword scores"):
-                    for kw, score in keywords:
-                        st.write(f"• {kw}: {score:.3f}")
-            else:
-                # It's a list of strings
-                st.write("**Keywords:**", ", ".join(keywords))
-
+            # Handle different keyword formats
+            try:
+                if not keywords:
+                    st.write("No keywords for this topic")
+                    continue
+                    
+                if isinstance(keywords[0], tuple):
+                    # List of (keyword, score) tuples
+                    keyword_texts = [str(kw) for kw, score in keywords]
+                    st.write("**Keywords:**", ", ".join(keyword_texts[:10]))
+                    
+                    # Show top keywords with scores
+                    with st.expander("View keyword scores"):
+                        for kw, score in keywords[:10]:
+                            st.write(f"• {kw}: {score:.3f}")
+                else:
+                    # List of strings
+                    keyword_texts = [str(kw) for kw in keywords]
+                    st.write("**Keywords:**", ", ".join(keyword_texts[:10]))
+                    
+            except Exception as e:
+                st.write("**Keywords:**", str(keywords)[:200])
 
 def display_text_stats(results):
     """Display text statistics"""
@@ -290,7 +349,7 @@ def main():
             df = pd.read_json(file_path)
         
         st.markdown("### 📋 Data Preview")
-        st.dataframe(df.head(10), use_container_width=True)
+        st.dataframe(df.head(10), width="stretch")
         st.caption(f"Showing 10 of {len(df)} rows")
         
     except Exception as e:
