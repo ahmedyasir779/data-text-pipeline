@@ -7,6 +7,7 @@
 
 No installation required - just upload your data and analyze!
 
+
 ---
 
 ![Python Version](https://img.shields.io/badge/python-3.8%2B-blue)
