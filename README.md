@@ -95,55 +95,48 @@ pip install -r requirements.txt
 python -m spacy download en_core_web_sm
 python -m textblob.download_corpora
 ```
-## 🐳 Docker Usage
+## 🐳 Docker Compose (Easiest Way)
 
-### Quick Start with Docker
+### Quick Start
 ```bash
-# Build image
-docker build -t data-text-pipeline .
+# Clone repository
+git clone https://github.com/YOUR-USERNAME/data-text-pipeline.git
+cd data-text-pipeline
 
-# Run pipeline
-docker run --rm \
-  -v $(pwd)/data:/app/data \
-  -v $(pwd)/output:/app/output \
-  data-text-pipeline \
-  python cli.py --data-file /app/data/sample.csv --text-column text --all
+# Start the app
+docker-compose up
+
+# Open browser: http://localhost:8501
 ```
 
-### Using Helper Script
-
-**Linux/Mac:**
+### Commands
 ```bash
-./docker-run.sh --data-file /app/data/sample.csv --text-column text --all
+# Start (foreground)
+docker-compose up
+
+# Start (background)
+docker-compose up -d
+
+# Stop
+docker-compose down
+
+# View logs
+docker-compose logs -f
+
+# Rebuild after code changes
+docker-compose up --build
 ```
 
-**Windows:**
-```cmd
-docker-run.bat --data-file /app/data/sample.csv --text-column text --all
-```
+### What it does
 
-### Docker Hub
+- Pulls Docker image from Docker Hub
+- Mounts your local data/ and output/ directories
+- Exposes web interface on port 8501
+- Automatically restarts if it crashes
 
-Pull pre-built image:
-```bash
-docker pull YOUR_USERNAME/data-text-pipeline:latest
-docker run --rm YOUR_USERNAME/data-text-pipeline:latest python cli.py --help
-```
+That's it! No complex setup needed.
+--------------------------------------------------------------
 
-### Volume Mounts
-
-- `/app/data` - Input data directory
-- `/app/output` - Output results
-- `/app/.cache` - Cache directory (optional, for performance)
-
-### Environment Variables
-```bash
-docker run --rm \
-  -e PIPELINE_CACHE_ENABLED=true \
-  -e PIPELINE_LOG_LEVEL=DEBUG \
-  data-text-pipeline \
-  python cli.py --data-file /app/data/sample.csv --text-column text --all
-```
 
 ### Basic Usage
 ```bash
